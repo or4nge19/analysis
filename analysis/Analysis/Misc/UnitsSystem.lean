@@ -458,7 +458,31 @@ theorem Scalar.in_inj {d:Dimensions} (unit q₁ q₂:Scalar d) [h: NeZero unit] 
   simp [←val_inj, in_def, h]
   field_simp
 
+/-- A subtype for scalar quantities with a positive value. -/
+@[ext]
+structure Scalar.Pos {d : Dimensions} where
+  val : Scalar d
+  property : 0 < val.val
 
+namespace Scalar
+
+/-- A `Scalar.Pos` can be used wherever a `Scalar` is expected. -/
+instance instCoePosScalar {d : Dimensions} : Coe (Pos (d:=d)) (Scalar d) where
+  coe := Pos.val
+
+@[simp]
+theorem val_coe_pos {d : Dimensions} (p : Pos (d:=d)) : (p : Scalar d).val = p.val.val := rfl
+
+/-- Lifts a unary real function to a function on dimensionless scalars.
+This allows to apply any function `ℝ → ℝ` without requiring a specific wrapper for each one.
+-/
+def map (f : ℝ → ℝ) (q : Scalar 0) : Scalar 0 :=
+  ⟨f q.val⟩
+
+@[simp]
+theorem val_map (f : ℝ → ℝ) (q : Scalar 0) : (map f q).val = f q.val := rfl
+
+end Scalar
 
 
 
